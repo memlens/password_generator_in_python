@@ -51,12 +51,48 @@ def need_symbols(answer):
         choice = True
     return choice
 
-def password_generator(length, include_uppercase, include_digits, include_symbols):
+
+def subchain_generator(lenght, chaine):
+    subChain = ""
+    """
+    Crée une chaine aléatoire
+
+    Args:
+        lenght (int): la longueur de la chaine du mot de passe
+        chaine (str): la chaine a modifier
+
+    Return:
+        chaine: la sous-chaine
+    """
+    for i in range(lenght):
+        subChain += random.choice(chaine)
+
+    return subChain
+
+def melange_chaine(chaine):
+    """
+    Modifie l'ordre de la chaine
+
+    Args:
+        chaine (str): la chaine à modifier
+
+    Return:
+        chaine (str): la chaine modifiée
+    """
+    liste_chaine = list(chaine)
+
+    random.shuffle(liste_chaine)
+
+    chaine = ''.join(liste_chaine)
+
+    return chaine
+
+def password_generator(lenght, include_uppercase, include_digits, include_symbols):
     """
     Génère un mot de passe aléatoire.
 
     Args:
-        length (int): La longueur du mot de passe.
+        lenght (int): La longueur du mot de passe.
         include_digits (bool): Inclure les lettres majuscules.
         include_digits (bool): Inclure des chiffres.
         include_symbols (bool): Inclure des symboles.
@@ -64,22 +100,34 @@ def password_generator(length, include_uppercase, include_digits, include_symbol
     Returns:
         chaine: Le mot de passe généré.
     """
-    chaine = string.ascii_lowercase
+    chaine1 = string.ascii_lowercase
+    chaine2 = string.ascii_uppercase
+    chaine3 = string.digits
+    chaine4 = string.punctuation
+    subLenght = lenght
     rst = ""
+    temp1 = ""
+    temp2 = ""
+    temp3 = ""
+    temp4 = ""
 
     if include_uppercase:
-        chaine += string.ascii_uppercase
+        temp1 = subchain_generator(lenght//4, chaine2)
+        subLenght -= lenght//4
 
     if include_digits:
-        chaine += string.digits
+        temp2 = subchain_generator(lenght//4, chaine3)
+        subLenght -= lenght//4
 
-    if include_symbols != "":
-        chaine += string.punctuation 
+    if include_symbols:
+        temp3 = subchain_generator(lenght//4, chaine4)
+        subLenght -= lenght//4
 
-    for i in range(length):
-        rst += random.choice(chaine)
+    temp4 = subchain_generator(subLenght, chaine1)
 
-    print(chaine)
+    rst = temp1 + temp2 + temp3 + temp4
+
+    rst = melange_chaine(rst)
         
     return rst
 
@@ -109,8 +157,15 @@ if __name__ == '__main__':
 
     print("************************")
 
-    print("Quelle longueur pour le mot de passe ??")
-    lenght = int(input("\t : "))
+    lenght = 0
+    while lenght < 8 :
+        print("Quelle longueur pour le mot de passe ?? (minimum 8)")
+        lenght = int(input("\t : "))
+
+        if lenght < 8 :
+            print("Vous devez entrer une valeure supérieur à 8")
+            continue
+        
 
     print("Voulez-vous inclure des majuscules ??")
     include_uppercase = input_user()
